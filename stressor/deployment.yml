@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stressor-deployment
+  labels:
+    app: stressor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stressor
+  template:
+    metadata:
+      labels:
+        app: stressor
+    spec:
+      containers:
+        - name: stressor
+          image: registry.gitlab.com/company/playgrounds/stressor:latest
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: gitlab
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stressor-service
+  labels:
+    app: stressor
+spec:
+  type: LoadBalancer
+  selector:
+    app: stressor
+  ports:
+    - port: 8443
+      targetPort: 8000
